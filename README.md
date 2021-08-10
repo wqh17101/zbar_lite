@@ -45,7 +45,7 @@ It is recommended for you to install setuptools to install and build.
 ```
 pip install setuptools wheel
 ```
-
+### Windows
 I select `x86_64-posix-seh-rev0` to build my wheel on Windows.
 
 ```
@@ -54,12 +54,24 @@ python setup.py build -c mingw32
 
 to build whl
 ```
-python setup.py bdist_wheel
+python setup.py build -c mingw32 bdist_wheel
 ```
 
 to install
 ```
-python setup.py install
+python setup.py build -c mingw32 install
+```
+
+### Linux
+
+to build whl
+```
+CC="gcc -std=gnu99" python setup.py bdist_wheel
+```
+
+to install
+```
+CC="gcc -std=gnu99" python setup.py install
 ```
 
 ## Some errors you could meet:
