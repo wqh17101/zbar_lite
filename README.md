@@ -64,18 +64,21 @@ python setup.py install
 
 ## Some errors you could meet:
 
-### 1. cannot find -lmsvcr140
+### 1. Cannot find -lmsvcr140
 
 if you build this whl in Windows with `python setup.py build_ext --compiler=mingw32`, 
 you may meet an error that `cannot find -lmsvcr140`, as you can see in <https://stackoverflow.com/questions/43873604/where-is-msvcr140-dll-does-it-exist>.
 
 *I fixed it in the setup.py*
 
-### 2. should be build by std99 or gnu99
+### 2. Should be build by std99 or gnu99
 ```
 CC="-std=gnu99" python setup.py bdist_wheel
 ```
-
+### 3. Do not support inverted Code
+When the background is darker than the QR Code's foreground, it's called an inverted Code. 
+These types of Codes typically have a dark background such as black, navy or dark grey. 
+While a few scanners can read an inverted Code, some apps are not able to scan them including us.
 # How to use
 ### *We provide several versions of whl right now. You can try to install via `pip install zbar-lite`.*
 
@@ -117,7 +120,7 @@ del(image)
 ```
 from zbar_helper.utils import decode, show_info
 import cv2
-image_path = "../test.png"
+image_path = "test.png"
 img = cv2.imread(image_path)
 print(decode(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)))
 show_info(decode(cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)), img)
