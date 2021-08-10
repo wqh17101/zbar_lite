@@ -73,7 +73,7 @@ you may meet an error that `cannot find -lmsvcr140`, as you can see in <https://
 
 ### 2. Should be build by std99 or gnu99
 ```
-CC="-std=gnu99" python setup.py bdist_wheel
+CC="gcc -std=gnu99" python setup.py bdist_wheel
 ```
 ### 3. Do not support inverted Code
 When the background is darker than the QR Code's foreground, it's called an inverted Code. 
