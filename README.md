@@ -91,6 +91,12 @@ CC="gcc -std=gnu99" python setup.py bdist_wheel
 When the background is darker than the QR Code's foreground, it's called an inverted Code. 
 These types of Codes typically have a dark background such as black, navy or dark grey. 
 While a few scanners can read an inverted Code, some apps are not able to scan them including us.
+
+### 4. Can not detect the barcode
+You can do some preprocess before decoding it.  
+It is recommended for you to try the ways below:
+1. Turn it to gray
+2. Split the color channel, such as use the ```b or g or r``` channel separately
 # How to use
 ### *We provide several versions of whl right now. You can try to install via `pip install zbar-lite`.*
 
