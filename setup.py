@@ -129,7 +129,7 @@ LIBS = [] if has_libc_iconv() else ['iconv']
 zbar = Extension('zbar', sources=SRCS, include_dirs=INCLUDE, libraries=LIBS)
 
 setup(name='zbar-lite',
-      version='0.23.91',
+      version='0.23.92',
       description='zbar lite package only support scan image and recognize barcode',
       long_description=open(os.path.join(CUR_DIR, "README.md"), encoding="utf-8").read(),
       long_description_content_type="text/markdown",

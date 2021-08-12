@@ -6,6 +6,8 @@
 @Email  :  597935261@qq.com
 """
 
+import math
+from collections import namedtuple
 from typing import List
 
 import zbar
@@ -15,20 +17,59 @@ try:
 except ModuleNotFoundError:
     print("Warning,func show_info can not be used when cv2 is not available")
 
+Position = namedtuple("Position", ["left_top", "left_bottom", "right_bottom", "right_top"])
+
 
 class BarcodeRes:
     """
     BarcodeRes
+
+    text : text of utf-8
+    type : barcode type
+    location : barcode point list
+    rect : bounding box of location
+    ori_orientation : zbar inner orientation (Only used for get points)
+    orientation : orientation degree
+    position : namedtuple with fields ["left_top", "left_bottom", "right_bottom", "right_top"]
     """
 
-    def __init__(self, text, barcode_type, location):
-        self.text = text
-        self.barcode_type = barcode_type
-        self.location = location
-        self.rect = get_bbox(location)
+    def __init__(self, x: zbar.Symbol):
+        self.text = x.data
+        self.type = str(x.type)
+        self.location = x.location
+        self.rect = get_bbox(x.location)
+        self.ori_orientation = str(x.orientation)
+        if self.ori_orientation == "LEFT":  # for LEFT
+            self.position = Position._make([self.location[0], self.location[3], self.location[2], self.location[1]])
+        else:
+            self.position = Position._make(self.location)
+
+        self.orientation = get_clockwise_orientation(self.position.left_bottom, self.position.left_top, "degree")
 
     def __repr__(self):
         return str(self.__dict__)
+
+
+def get_clockwise_orientation(start_p, end_p, return_format="degree"):
+    """
+    calc clockwise orientation
+    :param start_p: start point
+    :param end_p: end point
+    :param return_format: degree or radian
+    :return:
+    """
+    d_x = end_p[0] - end_p[0]
+    d_y = end_p[1] - start_p[1]
+    if d_y == 0:
+        if d_x >= 0:
+            res = math.pi / 2
+        else:
+            res = -math.pi / 2
+    else:
+        res = math.atan(d_x / d_y)
+    if return_format == "degree":
+        res = res / math.pi * 180
+    return round(res)
 
 
 def get_bbox(p_list):
@@ -59,7 +100,7 @@ def decode(img):
     raw = img.tobytes()
     image = zbar.Image(width, height, 'Y800', raw)
     scanner.scan(image)
-    res = [BarcodeRes(x.data, str(x.type), x.location) for x in image]
+    res = [BarcodeRes(x) for x in image]
     return res
 
 
