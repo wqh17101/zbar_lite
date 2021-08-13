@@ -144,3 +144,4 @@ print(decode(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)))
 show_info(decode(cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)), img)
 ```
 # For more documents you can visit <https://github.com/mchehab/zbar/tree/master/python> 
+# Some tests for more Barcode Tools <https://github.com/xulihang/Barcode-Reading-Performance-Test>
