@@ -1,7 +1,7 @@
 zbar-lite
 ----------
 
-# This module is used to provide an easy to pack zbar python binding to wheel. And also provide some pythonic apis for users to use zbar easily. 
+# This module is used to provide an easy way to pack zbar python binding to wheel. And also provide some pythonic apis for users to use zbar easily. 
 
 Only supports image related functions. 
 
