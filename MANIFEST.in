@@ -1,0 +1,2 @@
+prune .idea
+prune test_data
