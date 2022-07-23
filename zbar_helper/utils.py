@@ -7,8 +7,8 @@
 """
 
 import math
-from collections import namedtuple
-from typing import List
+from dataclasses import dataclass, field
+from typing import List, Tuple, Union
 
 import zbar
 
@@ -17,7 +17,20 @@ try:
 except ModuleNotFoundError:
     print("Warning,func show_info can not be used when cv2 is not available")
 
-Position = namedtuple("Position", ["left_top", "left_bottom", "right_bottom", "right_top"])
+
+@dataclass
+class Position:
+    """
+    Position use to construct a res which is same as Zxing
+    """
+    left_top: Union[List, Tuple] = field(default_factory=list)
+    left_bottom: Union[List, Tuple] = field(default_factory=list)
+    right_bottom: Union[List, Tuple] = field(default_factory=list)
+    right_top: Union[List, Tuple] = field(default_factory=list)
+    is_valid: bool = False
+
+    def __post_init__(self):
+        self.is_valid = bool(self.left_top and self.left_bottom and self.right_bottom and self.right_top)
 
 
 class BarcodeRes:
@@ -30,7 +43,7 @@ class BarcodeRes:
     rect : bounding box of location
     ori_orientation : zbar inner orientation (Only used for get points)
     orientation : orientation degree
-    position : namedtuple with fields ["left_top", "left_bottom", "right_bottom", "right_top"]
+    position : Position class with fields ["left_top", "left_bottom", "right_bottom", "right_top"]
     """
 
     def __init__(self, x: zbar.Symbol):
@@ -39,10 +52,13 @@ class BarcodeRes:
         self.location = x.location
         self.rect = get_bbox(x.location)
         self.ori_orientation = str(x.orientation)
-        if self.ori_orientation == "LEFT":  # for LEFT
-            self.position = Position._make([self.location[0], self.location[3], self.location[2], self.location[1]])
+        if len(self.location) != 4:
+            self.position = Position()
         else:
-            self.position = Position._make(self.location)
+            if self.ori_orientation == "LEFT":  # for LEFT
+                self.position = Position(*[self.location[0], self.location[3], self.location[2], self.location[1]])
+            else:
+                self.position = Position(*self.location)
 
         self.orientation = get_clockwise_orientation(self.position.left_bottom, self.position.left_top, "degree")
 
@@ -58,6 +74,8 @@ def get_clockwise_orientation(start_p, end_p, return_format="degree"):
     :param return_format: degree or radian
     :return:
     """
+    if len(start_p) != 2 or len(end_p) != 2:
+        return 0
     d_x = end_p[0] - end_p[0]
     d_y = end_p[1] - start_p[1]
     if d_y == 0:
@@ -119,10 +137,3 @@ def show_info(barcode_list: List[BarcodeRes], image):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
     cv2.imshow("res", image)
     cv2.waitKey()
-
-
-if __name__ == '__main__':
-    image_path = "../test.png"
-    img = cv2.imread(image_path)
-    print(decode(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)))
-    show_info(decode(cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)), img)
